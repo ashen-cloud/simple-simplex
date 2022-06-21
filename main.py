@@ -34,7 +34,6 @@ for i,c in enumerate(constraints):
     tableau[len(tableau)-1].append(int(t))
 
 # add obj function
-
 row = []
 eq_s = eq.split(' ')
 xs = [x for x in eq_s if 'x' in x]
@@ -58,3 +57,19 @@ print('last row', last_row)
 
 a_min = np.argmin(last_row)
 print('min ind', a_min)
+
+exiting_row = tableau.T[a_min]
+print(exiting_row)
+
+last_col = tableau.T[tableau.shape[0] + 1]
+print('last col', last_col)
+
+div = np.divide(last_col, exiting_row)
+div = div[0:div.shape[0] - 1]
+
+exit_var_i = np.argmin(div)
+print('div', div)
+print('exit var index', exit_var_i)
+
+exit_var = exiting_row[exit_var_i]
+print(exit_var)

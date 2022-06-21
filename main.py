@@ -73,3 +73,17 @@ print('exit var index', exit_var_i)
 
 exit_var = exiting_row[exit_var_i]
 print(exit_var)
+
+def get_pivot(tableau, i, j):
+    pivot = tableau[i][j]
+    tableau[i] = [element / pivot for element in tableau[i]]
+    for index, row in enumerate(tableau):
+       if index != i:
+          row_scale = [y * tableau[index][j] for y in tableau[i]]
+          tableau[index] = [x - y for x,y in zip(tableau[index], row_scale)]
+
+    return tableau
+
+
+print('RESULT', get_pivot(tableau, exit_var_i, a_min))
+

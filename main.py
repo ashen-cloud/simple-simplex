@@ -47,43 +47,49 @@ tableau.append(row)
 print('tab:')
 tableau = np.array(tableau)
 print(tableau)
-
 print('-----------')
 
-# find max negative
+import math
 
-last_row = tableau[tableau.shape[0]-1:]
-print('last row', last_row)
+def step(tableau):
+    # find max negative
+    last_row = tableau[tableau.shape[0]-1:]
+    last_row = last_row[last_row.shape[0] - 1]
 
-a_min = np.argmin(last_row)
-print('min ind', a_min)
+    a_min = np.argmin(last_row)
 
-exiting_row = tableau.T[a_min]
-print(exiting_row)
+    exiting_row = tableau.T[a_min]
 
-last_col = tableau.T[tableau.shape[0] + 1]
-print('last col', last_col)
+    last_col = tableau.T[tableau.shape[0] + 1]
 
-div = np.divide(last_col, exiting_row)
-div = div[0:div.shape[0] - 1]
+    rmInf = lambda a : [0 if x == math.inf or not x or x == -math.inf else x for x in a]
+    div = rmInf(np.divide(last_col[0:last_col.shape[0] - 1], exiting_row[0:exiting_row.shape[0] - 1]))
 
-exit_var_i = np.argmin(div)
-print('div', div)
-print('exit var index', exit_var_i)
+    blowup = lambda arr : [x * -100000 if x < 0 else x for x in arr]
 
-exit_var = exiting_row[exit_var_i]
-print(exit_var)
+    blow_div = blowup(div)
+
+    exit_var_i = np.argmin(blow_div)
+
+    return tableau, exit_var_i, a_min
 
 def get_pivot(tableau, i, j):
     pivot = tableau[i][j]
-    tableau[i] = [element / pivot for element in tableau[i]]
+    tableau[i] = [(element or 0) / (pivot or 1) for element in tableau[i]]
     for index, row in enumerate(tableau):
        if index != i:
           row_scale = [y * tableau[index][j] for y in tableau[i]]
           tableau[index] = [x - y for x,y in zip(tableau[index], row_scale)]
-
     return tableau
 
+def find_negatives(row):
+        for elem in row:
+            if elem < 0:
+                return True
 
-print('RESULT', get_pivot(tableau, exit_var_i, a_min))
-
+has_negatives = True
+while has_negatives:
+    tableau, i, j = step(tableau)
+    tableau = get_pivot(tableau, i, j)
+    has_negatives = find_negatives(tableau[tableau.shape[0] - 1])
+print(tableau)
